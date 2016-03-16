@@ -1,6 +1,6 @@
 # AP.AspNet.ResponseCompression
-AP.AspNet.ResponseCompression is for page Compression.<br/>
-a middleware for Compression response page.<br/><br/>
+AP.AspNet.ResponseCompression is for HTML minification.<br/>
+a middleware for HTML minification.<br/><br/>
 
           public void Configure(IApplicationBuilder app)
            {
