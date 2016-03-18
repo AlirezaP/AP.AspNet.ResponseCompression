@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO.Compression;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
@@ -13,6 +14,8 @@ namespace AP.AspNet.ResponseCompression
         private System.IO.MemoryStream ms;
         private readonly RequestDelegate _next;
         private readonly ILogger _logger;
+
+        private System.Collections.Generic.List<byte> q = new System.Collections.Generic.List<byte>();
 
         public ResponseCompressMiddleware(RequestDelegate next, IHostingEnvironment hostingEnv, ILoggerFactory loggerFactory)
         {
@@ -41,6 +44,9 @@ namespace AP.AspNet.ResponseCompression
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
+        /// 
+       static System.IO.Stream stream;
+        System.IO.MemoryStream ms2;
         public Task Invoke(HttpContext context)
         {
 
@@ -49,12 +55,12 @@ namespace AP.AspNet.ResponseCompression
                 ms = new System.IO.MemoryStream();
                 context.Response.Body = ms;
             }
-            else
+
+            byte[] buf = ms.ToArray();
+            byte[] compresedData = Helpers.Compress(buf);
+
+            if (buf.Length > 0)
             {
-                byte[] buf = ms.ToArray();
-                byte[] compresedData = Helpers.Compress(buf);
-
-
                 ms = new System.IO.MemoryStream();
                 context.Response.Body.Position = 0;
                 context.Response.Body.Write(compresedData, 0, compresedData.Length);
@@ -63,5 +69,7 @@ namespace AP.AspNet.ResponseCompression
 
             return _next(context);
         }
+
     }
+
 }
