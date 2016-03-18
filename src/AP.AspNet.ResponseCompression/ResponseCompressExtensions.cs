@@ -10,14 +10,24 @@ namespace Microsoft.AspNet.Builder
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public static IApplicationBuilder UseGzipResponseCompress(this IApplicationBuilder builder, CompressionOption options)
+        public static IApplicationBuilder UseGzipResponseCompress(this IApplicationBuilder builder)
         {
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            return builder.UseMiddleware<ResponseGzipCompressMiddleware>(options);
+            return builder.UseMiddleware<ResponseGzipCompressMiddleware>();
+        }
+
+        public static IApplicationBuilder UseMinifyResponseCompress(this IApplicationBuilder builder)
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            return builder.UseMiddleware<ResponseMinifyCompressMiddleware>();
         }
     }
 }
