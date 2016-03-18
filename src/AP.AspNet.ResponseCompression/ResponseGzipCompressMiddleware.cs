@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Threading.Tasks;
@@ -9,13 +9,14 @@ using Microsoft.Extensions.Logging;
 
 namespace AP.AspNet.ResponseCompression
 {
-    public class ResponseMinifyCompressMiddleware
+    public class ResponseGzipCompressMiddleware
     {
         private System.IO.MemoryStream ms;
         private readonly RequestDelegate _next;
         private readonly ILogger _logger;
+        private readonly CompressionOption _option;
 
-        public ResponseMinifyCompressMiddleware(RequestDelegate next, IHostingEnvironment hostingEnv, ILoggerFactory loggerFactory)
+        public ResponseGzipCompressMiddleware(RequestDelegate next, IHostingEnvironment hostingEnv, CompressionOption option, ILoggerFactory loggerFactory)
         {
             if (next == null)
             {
@@ -34,7 +35,8 @@ namespace AP.AspNet.ResponseCompression
 
 
             _next = next;
-            _logger = loggerFactory.CreateLogger<ResponseMinifyCompressMiddleware>();
+            _option = option;
+            _logger = loggerFactory.CreateLogger<ResponseGzipCompressMiddleware>();
         }
 
         /// <summary>
@@ -55,17 +57,32 @@ namespace AP.AspNet.ResponseCompression
 
             if (buf.Length > 0)
             {
-                byte[] compresedData = Helpers.Compress(buf);
-           
-                ms = new System.IO.MemoryStream();
-                context.Response.Body.Position = 0;
-                context.Response.Body.Write(compresedData, 0, compresedData.Length);
-                context.Response.Body = ms;
-            }
+                byte[] compresedData;
 
+                if (_option.EnabledMinification)
+                {
+                    buf = Helpers.Compress(buf);
+                }
+
+                using (System.IO.MemoryStream msGzip = new System.IO.MemoryStream())
+                {
+                    using (GZipStream compressionStream = new GZipStream(msGzip,
+                       CompressionMode.Compress, false))
+                    {
+                        compressionStream.Write(buf, 0, buf.Length);
+                    }
+
+                    compresedData = msGzip.ToArray();
+
+                    context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.ContentEncoding] = "gzip";
+
+                    ms = new System.IO.MemoryStream();
+                    context.Response.Body.Position = 0;
+                    context.Response.Body.Write(compresedData, 0, compresedData.Length);
+                    context.Response.Body = ms;
+                }
+            }
             return _next(context);
         }
-
     }
-
 }
