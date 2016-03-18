@@ -1,5 +1,5 @@
 # AP.AspNet.ResponseCompression
-AP.AspNet.ResponseCompression is for HTML minification and Gzip compression.<br/>
+AP.AspNet.ResponseCompression is for <b>HTML minification</b> and <b>Gzip</b> compression.<br/>
 a middleware for HTML minification.<br/><br/>
 
           public void Configure(IApplicationBuilder app)
@@ -16,16 +16,16 @@ a middleware for HTML minification.<br/><br/>
             });
         }
         
-  ResponseCompression remove "Enter" Char and replace each two "Space" char to one.
+  If "EnabledMinification" was true then ResponseCompression remove "Enter" Char and replace each two "Space" char to one.
   <br/>
   <br/>
-  sample output (before ResponseCompression):<br/>
+  sample output (EnabledMinification=false):<br/>
   
                    <h1>        Hello       World!      </h1>
                    <p>   <h2>tag</h2>    <h2>tag2  tag3   </h2></p>
   <br/>
   <br/>
-  sample output (after ResponseCompression):<br/>
+  sample output (EnabledMinification=true):<br/>
 
                    <h1> Hello World! </h1> <p> <h2>tag</h2> <h2>tag2 tag3 </h2></p>
   
