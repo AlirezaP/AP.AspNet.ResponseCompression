@@ -45,8 +45,6 @@ namespace AP.AspNet.ResponseCompression
         /// <param name="context"></param>
         /// <returns></returns>
         /// 
-       static System.IO.Stream stream;
-        System.IO.MemoryStream ms2;
         public Task Invoke(HttpContext context)
         {
 
