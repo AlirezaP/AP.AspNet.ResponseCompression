@@ -15,8 +15,6 @@ namespace AP.AspNet.ResponseCompression
         private readonly RequestDelegate _next;
         private readonly ILogger _logger;
 
-        private System.Collections.Generic.List<byte> q = new System.Collections.Generic.List<byte>();
-
         public ResponseCompressMiddleware(RequestDelegate next, IHostingEnvironment hostingEnv, ILoggerFactory loggerFactory)
         {
             if (next == null)
@@ -47,7 +45,6 @@ namespace AP.AspNet.ResponseCompression
         /// 
         public Task Invoke(HttpContext context)
         {
-
             if (ms == null)
             {
                 ms = new System.IO.MemoryStream();
@@ -55,10 +52,11 @@ namespace AP.AspNet.ResponseCompression
             }
 
             byte[] buf = ms.ToArray();
-            byte[] compresedData = Helpers.Compress(buf);
 
             if (buf.Length > 0)
             {
+                byte[] compresedData = Helpers.Compress(buf);
+           
                 ms = new System.IO.MemoryStream();
                 context.Response.Body.Position = 0;
                 context.Response.Body.Write(compresedData, 0, compresedData.Length);
