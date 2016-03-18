@@ -40,7 +40,11 @@ namespace AP.AspNet.ResponseCompression
 
         public async Task Invoke(HttpContext context)
         {
-            // TODO: Check the Accept-Encoding header to make sure the client even wants compression. If not: `await next(context); return;`
+            if (!context.Request.Headers[Microsoft.Net.Http.Headers.HeaderNames.AcceptEncoding].ToString().Contains("gzip"))
+            {
+                await _next(context);
+                return;
+            }
 
             var originalBody = context.Response.Body;
             var bufferStream = new MemoryStream();
