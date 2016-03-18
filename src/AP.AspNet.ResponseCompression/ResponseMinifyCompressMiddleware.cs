@@ -9,13 +9,13 @@ using Microsoft.Extensions.Logging;
 
 namespace AP.AspNet.ResponseCompression
 {
-    public class ResponseCompressMiddleware
+    public class ResponseMinifyCompressMiddleware
     {
         private System.IO.MemoryStream ms;
         private readonly RequestDelegate _next;
         private readonly ILogger _logger;
 
-        public ResponseCompressMiddleware(RequestDelegate next, IHostingEnvironment hostingEnv, ILoggerFactory loggerFactory)
+        public ResponseMinifyCompressMiddleware(RequestDelegate next, IHostingEnvironment hostingEnv, ILoggerFactory loggerFactory)
         {
             if (next == null)
             {
@@ -34,7 +34,7 @@ namespace AP.AspNet.ResponseCompression
 
 
             _next = next;
-            _logger = loggerFactory.CreateLogger<ResponseCompressMiddleware>();
+            _logger = loggerFactory.CreateLogger<ResponseMinifyCompressMiddleware>();
         }
 
         /// <summary>
