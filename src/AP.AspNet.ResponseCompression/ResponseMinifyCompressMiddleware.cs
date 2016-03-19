@@ -40,12 +40,16 @@ namespace AP.AspNet.ResponseCompression
 
         public async Task Invoke(HttpContext context)
         {
-
             var originalBody = context.Response.Body;
             var bufferStream = new MemoryStream();
             context.Response.Body = bufferStream;
 
             await _next(context);
+
+            if (!context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.ContentType].ToString().Contains("text/html"))
+            {
+                return;
+            }
 
             byte[] buf = bufferStream.ToArray();
             byte[] compresedData = Helpers.Compress(buf);
